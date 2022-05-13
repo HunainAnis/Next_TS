@@ -1,6 +1,9 @@
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
+import { StoreProvider } from 'easy-peasy'
+import { createContext, useState } from 'react'
 import 'reset-css'
 import PlayerLayout from '../components/PlayerLayout'
+import { store } from '../lib/store'
 
 const theme = extendTheme({
   colors: {
@@ -29,12 +32,23 @@ const theme = extendTheme({
     }
   }
 })
+export const storeContext = createContext(null);
 function MyApp({ Component, pageProps }) {
+  const [ activeSongs, setActiveSongs ] = useState([])
+  const [ activeSong, setActiveSong ] = useState(null)
   return (
     <ChakraProvider theme={theme}>
-      <PlayerLayout>
-        <Component {...pageProps} />
-      </PlayerLayout>
+      <storeContext.Provider value={{activeSong, setActiveSong, activeSongs, setActiveSongs}}>
+        {
+          Component.authPage
+          ?
+          <Component {...pageProps} />
+          :
+          <PlayerLayout>
+            <Component {...pageProps} />
+          </PlayerLayout>
+        }
+      </storeContext.Provider>
     </ChakraProvider>
   )
 }

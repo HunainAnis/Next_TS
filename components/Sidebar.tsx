@@ -1,7 +1,10 @@
 import { Box, Divider, LinkBox, LinkOverlay, List, ListIcon, ListItem } from "@chakra-ui/layout";
+import { Skeleton, SkeletonText } from "@chakra-ui/react";
+import { Playlist } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { MdFavorite, MdHome, MdLibraryMusic, MdPlaylistAdd, MdSearch } from 'react-icons/md'
+import { usePlaylist } from "../lib/hooks";
 import MenuItem from "./MenuItem";
 const navItems = [
     {
@@ -34,9 +37,9 @@ const musicMenu = [
     }
 ]
 
-const playlists = new Array(30).fill(1).map((_, i) => `Playlist ${i+1}`)
-
 const Sidebar = () => {
+    const { playlists, isLoading } = usePlaylist();
+
     return(
         <Box width="100%" height="calc(100vh - 100px)" bg="black" paddingX="5px" color="gray">
             <Box paddingY="20px" height="100%">
@@ -65,12 +68,28 @@ const Sidebar = () => {
                 <Box height="66%" overflowY="auto" paddingY="20px">
                     <List spacing={2}>
                         {
-                            playlists.map((item) => (
-                                <ListItem key={item} paddingX="20px">
+                            isLoading 
+                            ?
+                            <Box px="20px">
+                                {
+                                    new Array(5).fill("_").map((_, i)=>(
+                                        <Skeleton key={i} mt={3} height='15px' width="60px"/>
+                                    ))
+                                }
+                            </Box>
+                            :
+                            playlists?.map((item: Playlist) => (
+                                <ListItem key={item.id} paddingX="20px">
                                     <LinkBox>
-                                        <Link href="/" passHref>
+                                        <Link 
+                                            href={{
+                                                pathname:"/playlist/[id]",
+                                                query:{id: item.id}
+                                            }}
+                                            passHref
+                                        >
                                             <LinkOverlay>
-                                                {item}
+                                                {item.name}
                                             </LinkOverlay>
                                         </Link>
                                     </LinkBox>
