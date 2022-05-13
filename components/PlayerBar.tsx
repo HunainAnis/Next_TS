@@ -11,11 +11,11 @@ const PlayerBar = () => {
 
     const onVolumeChange = (e) => {
         setVolume(parseFloat(e[0]))
-        soundRef.current.volume(e[0])
+        soundRef?.current?.volume(e[0])
     }
 
     useEffect(()=>{
-        soundRef.current.volume(volume)
+        soundRef?.current?.volume(volume)
     }, [activeSong])
 
     return(
